@@ -1,21 +1,18 @@
 # Nyx Roleplay
 
-Projeto **Nyx Roleplay**, desenvolvido pela **Mythøs Network**.
-
-## Base do projeto
-
-Este repositório utiliza o pacote `RPGRAM_GitHub_READY.zip` como base para a adaptação do projeto RPgram para Nyx Roleplay.
-
-## Identidade
-
-- Nome do projeto: **Nyx Roleplay**
-- Empresa: **Mythøs Network**
-- Plataforma-alvo: Android / GTA San Andreas Multiplayer
-
-## Adaptação
-
-A base será mantida funcional enquanto as referências de RPgram são substituídas pela identidade Nyx Roleplay. Não serão alteradas configurações de servidor sem valores fornecidos pelo proprietário do projeto.
+Projeto oficial do Nyx Roleplay, desenvolvido pela Mythøs Network.
 
 ## Estrutura
 
-O pacote original permanece preservado como base em `RPGRAM_GitHub_READY.zip`. A extração e edição dos arquivos binários do pacote dependem de acesso ao conteúdo extraído do ZIP.
+- `app/` — aplicativo Android Nyx Roleplay
+- `server/` — configurações e scripts do servidor
+- `assets/` — identidade visual, ícones e recursos
+- `docs/` — documentação do projeto
+- `build/` — arquivos e configuração de build
+
+## Identidade
+
+**Nome:** Nyx Roleplay  
+**Empresa:** Mythøs Network
+
+Este repositório é exclusivo do Nyx Roleplay e não contém a base RPgram.
