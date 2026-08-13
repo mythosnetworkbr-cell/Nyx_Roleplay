@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="nyx_background">#070711</color>
+    <color name="nyx_surface">#11111D</color>
+    <color name="nyx_surface_elevated">#181827</color>
+    <color name="nyx_primary">#8B5CF6</color>
+    <color name="nyx_primary_dark">#5B21B6</color>
+    <color name="nyx_accent">#C4B5FD</color>
+    <color name="nyx_text">#FFFFFF</color>
+    <color name="nyx_text_muted">#9CA3AF</color>
+</resources>
