@@ -4,64 +4,159 @@ import android.app.*;
 import android.os.*;
 import android.content.*;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.view.*;
 import android.widget.*;
 
 public class MainActivity extends Activity {
     static final int PICK = 1001;
     TextView status;
+    LinearLayout root;
+    int bg = Color.rgb(7, 6, 12);
+    int panel = Color.rgb(18, 16, 27);
+    int panel2 = Color.rgb(25, 22, 37);
+    int purple = Color.rgb(139, 92, 246);
+    int purpleLight = Color.rgb(196, 181, 253);
+    int white = Color.rgb(248, 247, 255);
+    int muted = Color.rgb(165, 158, 181);
 
-    TextView text(String s, float size) {
+    GradientDrawable rounded(int color, float radius) {
+        GradientDrawable g = new GradientDrawable();
+        g.setColor(color);
+        g.setCornerRadius(radius);
+        return g;
+    }
+
+    TextView label(String s, float size, int color) {
         TextView v = new TextView(this);
         v.setText(s);
-        v.setTextColor(Color.rgb(248,247,255));
+        v.setTextColor(color);
         v.setTextSize(size);
+        v.setGravity(Gravity.CENTER_VERTICAL);
+        return v;
+    }
+
+    TextView centered(String s, float size, int color) {
+        TextView v = label(s, size, color);
         v.setGravity(Gravity.CENTER);
         return v;
     }
 
+    Button actionButton(String title, int color, int textColor) {
+        Button b = new Button(this);
+        b.setText(title);
+        b.setTextColor(textColor);
+        b.setTextSize(14);
+        b.setAllCaps(false);
+        b.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        b.setGravity(Gravity.CENTER);
+        b.setPadding(12, 0, 12, 0);
+        b.setBackground(rounded(color, 28));
+        return b;
+    }
+
     @Override public void onCreate(Bundle b) {
         super.onCreate(b);
-        LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setGravity(Gravity.CENTER_HORIZONTAL);
-        root.setPadding(32,55,32,30);
-        root.setBackgroundColor(Color.rgb(8,7,13));
+        getWindow().setStatusBarColor(bg);
+        getWindow().setNavigationBarColor(bg);
 
+        ScrollView scroll = new ScrollView(this);
+        scroll.setFillViewport(true);
+        scroll.setBackgroundColor(bg);
+
+        root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(22, 26, 22, 26);
+        scroll.addView(root);
+
+        LinearLayout header = new LinearLayout(this);
+        header.setGravity(Gravity.CENTER_VERTICAL);
         ImageView logo = new ImageView(this);
         logo.setImageResource(R.drawable.nyx_logo);
-        root.addView(logo, new LinearLayout.LayoutParams(110,110));
+        logo.setPadding(5,5,5,5);
+        header.addView(logo, new LinearLayout.LayoutParams(66,66));
+        LinearLayout titles = new LinearLayout(this);
+        titles.setOrientation(LinearLayout.VERTICAL);
+        TextView name = label("NYX ROLEPLAY", 22, white);
+        name.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        titles.addView(name, new LinearLayout.LayoutParams(-1,34));
+        titles.addView(label("MYTHØS NETWORK", 11, purpleLight), new LinearLayout.LayoutParams(-1,25));
+        header.addView(titles, new LinearLayout.LayoutParams(0,66,1));
+        TextView online = centered("● ONLINE", 10, Color.rgb(134,239,172));
+        online.setBackground(rounded(Color.rgb(19,45,31), 24));
+        header.addView(online, new LinearLayout.LayoutParams(84,34));
+        root.addView(header);
 
-        TextView title = text("NYX ROLEPLAY", 30);
-        title.setTypeface(null, 1);
-        root.addView(title, new LinearLayout.LayoutParams(-1,65));
+        Space gap = new Space(this);
+        root.addView(gap, new LinearLayout.LayoutParams(1,22));
 
-        TextView sub = text("MYTHØS NETWORK", 13);
-        sub.setTextColor(Color.rgb(196,181,253));
-        root.addView(sub, new LinearLayout.LayoutParams(-1,40));
+        LinearLayout hero = new LinearLayout(this);
+        hero.setOrientation(LinearLayout.VERTICAL);
+        hero.setPadding(22,22,22,22);
+        hero.setBackground(rounded(panel, 24));
+        TextView city = label("CIDADE VIVA", 12, purpleLight);
+        city.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        hero.addView(city, new LinearLayout.LayoutParams(-1,28));
+        TextView headline = label("Seu roleplay.\nDo seu jeito.", 30, white);
+        headline.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        hero.addView(headline, new LinearLayout.LayoutParams(-1,82));
+        hero.addView(label("Entre no servidor Nyx e viva sua própria história.", 13, muted), new LinearLayout.LayoutParams(-1,40));
+        root.addView(hero);
 
-        TextView mode = text("ROLEPLAY MOBILE", 12);
-        mode.setTextColor(Color.rgb(169,162,184));
-        root.addView(mode, new LinearLayout.LayoutParams(-1,45));
+        root.addView(new Space(this), new LinearLayout.LayoutParams(1,14));
 
-        Button folder = new Button(this);
-        folder.setText("SELECIONAR PASTA DO GTA");
-        folder.setOnClickListener(v -> pick());
-        root.addView(folder, new LinearLayout.LayoutParams(-1,60));
+        LinearLayout statusCard = new LinearLayout(this);
+        statusCard.setGravity(Gravity.CENTER_VERTICAL);
+        statusCard.setPadding(18,12,18,12);
+        statusCard.setBackground(rounded(panel2, 18));
+        TextView dot = centered("●", 18, Color.rgb(134,239,172));
+        statusCard.addView(dot, new LinearLayout.LayoutParams(34,40));
+        status = label("Verificando GTA San Andreas...", 13, white);
+        statusCard.addView(status, new LinearLayout.LayoutParams(0,40,1));
+        TextView version = centered("MOBILE", 10, muted);
+        statusCard.addView(version, new LinearLayout.LayoutParams(62,40));
+        root.addView(statusCard);
 
-        Button play = new Button(this);
-        play.setText("JOGAR NYX ROLEPLAY");
+        root.addView(new Space(this), new LinearLayout.LayoutParams(1,14));
+
+        Button play = actionButton("▶   JOGAR NYX ROLEPLAY", purple, Color.WHITE);
         play.setTextSize(17);
+        LinearLayout.LayoutParams playParams = new LinearLayout.LayoutParams(-1,68);
+        playParams.setMargins(0,0,0,12);
+        root.addView(play, playParams);
         play.setOnClickListener(v -> launchGta());
-        LinearLayout.LayoutParams pp = new LinearLayout.LayoutParams(-1,65);
-        pp.setMargins(0,18,0,12);
-        root.addView(play, pp);
 
-        status = text("Verificando GTA San Andreas...", 13);
-        status.setTextColor(Color.rgb(169,162,184));
-        root.addView(status, new LinearLayout.LayoutParams(-1,80));
+        Button folder = actionButton("📁   Selecionar pasta do GTA", panel2, white);
+        root.addView(folder, new LinearLayout.LayoutParams(-1,58));
+        folder.setOnClickListener(v -> pick());
 
-        setContentView(root);
+        root.addView(new Space(this), new LinearLayout.LayoutParams(1,20));
+
+        TextView section = label("SERVIDOR", 11, muted);
+        section.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        root.addView(section, new LinearLayout.LayoutParams(-1,26));
+
+        LinearLayout server = new LinearLayout(this);
+        server.setPadding(18,14,18,14);
+        server.setGravity(Gravity.CENTER_VERTICAL);
+        server.setBackground(rounded(panel, 18));
+        LinearLayout serverText = new LinearLayout(this);
+        serverText.setOrientation(LinearLayout.VERTICAL);
+        TextView serverName = label("Nyx Roleplay", 16, white);
+        serverName.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        serverText.addView(serverName, new LinearLayout.LayoutParams(-1,28));
+        serverText.addView(label("Roleplay Mobile  •  Cidade Viva", 12, muted), new LinearLayout.LayoutParams(-1,24));
+        server.addView(serverText, new LinearLayout.LayoutParams(0,52,1));
+        TextView arrow = centered("›", 28, purpleLight);
+        server.addView(arrow, new LinearLayout.LayoutParams(35,52));
+        root.addView(server);
+
+        root.addView(new Space(this), new LinearLayout.LayoutParams(1,18));
+        TextView footer = centered("NYX ROLEPLAY  •  MYTHØS NETWORK\nVersão 1.0.0", 10, Color.rgb(105,99,120));
+        root.addView(footer, new LinearLayout.LayoutParams(-1,45));
+
+        setContentView(scroll);
         check();
     }
 
@@ -73,7 +168,7 @@ public class MainActivity extends Activity {
     }
 
     void check() {
-        status.setText(installed() ? "GTA San Andreas encontrado. Nyx pronto." : "GTA San Andreas não encontrado.");
+        status.setText(installed() ? "GTA San Andreas encontrado — pronto para jogar" : "GTA San Andreas não encontrado");
     }
 
     void pick() {
@@ -85,9 +180,10 @@ public class MainActivity extends Activity {
     void launchGta() {
         if (!installed()) {
             new AlertDialog.Builder(this)
-                .setTitle("GTA não encontrado")
-                .setMessage("Instale uma versão compatível do GTA San Andreas antes de iniciar o Nyx Roleplay.")
-                .setPositiveButton("OK", null).show();
+                .setTitle("GTA San Andreas não encontrado")
+                .setMessage("Instale uma versão compatível do GTA San Andreas e selecione a pasta dos arquivos do jogo.")
+                .setPositiveButton("Selecionar pasta", (d, w) -> pick())
+                .setNegativeButton("Fechar", null).show();
             return;
         }
         Intent i = getPackageManager().getLaunchIntentForPackage("com.rockstargames.gtasa");
@@ -100,8 +196,11 @@ public class MainActivity extends Activity {
     @Override protected void onActivityResult(int r, int c, Intent d) {
         super.onActivityResult(r,c,d);
         if (r == PICK && c == RESULT_OK && d != null) {
+            try {
+                getContentResolver().takePersistableUriPermission(d.getData(), Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            } catch (Exception ignored) {}
             getPreferences(0).edit().putString("gta_tree", d.getData().toString()).apply();
-            status.setText("Pasta GTA vinculada. Nyx pronto para iniciar.");
+            status.setText("Pasta GTA vinculada — Nyx pronto para iniciar");
         }
     }
 }
