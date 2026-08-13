@@ -9,11 +9,13 @@ import android.net.Uri;
 import android.view.Gravity;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
-    private static final String SERVER_IP = "51.254.21.27";
-    private static final int SERVER_PORT = 7777;
+    private static final String SERVER1_HOST = "ip.oscrias.com.br";
+    private static final String SERVER1_IP = "ip.oscrias.com.br";
+    private static final int SERVER1_PORT = 7777;
+    private static final String SERVER2_HOST = "51.254.21.27";
+    private static final int SERVER2_PORT = 7777;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -21,38 +23,40 @@ public class MainActivity extends Activity {
         getWindow().setNavigationBarColor(Color.rgb(7,6,12));
 
         LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
         root.setGravity(Gravity.CENTER);
         root.setBackgroundColor(Color.rgb(7,6,12));
         root.setPadding(28,28,28,28);
 
-        Button play = new Button(this);
-        play.setText("▶  JOGAR NYX ROLEPLAY");
-        play.setTextSize(18);
-        play.setTextColor(Color.WHITE);
-        play.setAllCaps(false);
-        play.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        play.setMinHeight(72);
-        play.setOnClickListener(v -> launchNyx());
-
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(-1,72);
-        root.addView(play,p);
+        Button server1 = button("▶  NYX ROLEPLAY 01");
+        Button server2 = button("▶  NYX ROLEPLAY 02");
+        root.addView(server1, new LinearLayout.LayoutParams(-1,72));
+        LinearLayout.LayoutParams gap = new LinearLayout.LayoutParams(1,18);
+        root.addView(new android.view.View(this),gap);
+        root.addView(server2, new LinearLayout.LayoutParams(-1,72));
+        server1.setOnClickListener(v -> launchServer(SERVER1_HOST, SERVER1_PORT));
+        server2.setOnClickListener(v -> launchServer(SERVER2_HOST, SERVER2_PORT));
         setContentView(root);
     }
 
-    private void launchNyx() {
-        Intent launch = getPackageManager().getLaunchIntentForPackage("com.rockstargames.gtasa");
-        if (launch == null) {
-            Toast.makeText(this, "Cliente Nyx não encontrado neste aparelho.", Toast.LENGTH_LONG).show();
-            return;
-        }
+    private Button button(String text) {
+        Button b = new Button(this);
+        b.setText(text);
+        b.setTextSize(18);
+        b.setTextColor(Color.WHITE);
+        b.setAllCaps(false);
+        b.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        return b;
+    }
 
-        // Test server embedded in the launcher. The Nyx client can consume these
-        // extras if its launcher/SA-MP integration supports explicit server data.
-        launch.putExtra("server_ip", SERVER_IP);
-        launch.putExtra("server_port", SERVER_PORT);
-        launch.putExtra("ip", SERVER_IP);
-        launch.putExtra("port", SERVER_PORT);
-        launch.setData(Uri.parse("samp://" + SERVER_IP + ":" + SERVER_PORT));
+    private void launchServer(String host, int port) {
+        Intent launch = getPackageManager().getLaunchIntentForPackage("com.rockstargames.gtasa");
+        if (launch == null) return;
+        launch.putExtra("server_ip", host);
+        launch.putExtra("server_port", port);
+        launch.putExtra("ip", host);
+        launch.putExtra("port", port);
+        launch.setData(Uri.parse("samp://" + host + ":" + port));
         startActivity(launch);
     }
 }
