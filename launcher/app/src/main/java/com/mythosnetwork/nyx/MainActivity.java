@@ -18,51 +18,110 @@ public class MainActivity extends Activity {
     private static final int CITY1_PORT = 7777;
     private static final String CITY2_HOST = "51.254.21.27";
     private static final int CITY2_PORT = 7777;
-    private int bg = Color.rgb(6,6,10), card = Color.rgb(18,17,25), accent = Color.rgb(145,92,255), white = Color.rgb(248,247,252), muted = Color.rgb(160,154,173);
-
-    private GradientDrawable shape(int color, float radius) {
-        GradientDrawable g = new GradientDrawable(); g.setColor(color); g.setCornerRadius(radius); return g;
-    }
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
-        getWindow().setStatusBarColor(bg); getWindow().setNavigationBarColor(bg);
-        LinearLayout root = new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL); root.setBackgroundColor(bg); root.setPadding(24,24,24,24);
+        getWindow().setStatusBarColor(Color.rgb(5,5,9));
+        getWindow().setNavigationBarColor(Color.rgb(5,5,9));
 
-        TextView brand = text("NYX", 34, white); brand.setTypeface(Typeface.DEFAULT, Typeface.BOLD); brand.setGravity(Gravity.CENTER); root.addView(brand, new LinearLayout.LayoutParams(-1,54));
-        TextView role = text("ROLEPLAY", 13, accent); role.setTypeface(Typeface.DEFAULT, Typeface.BOLD); role.setGravity(Gravity.CENTER); root.addView(role, new LinearLayout.LayoutParams(-1,28));
-        TextView hint = text("DUAS CIDADES • DUAS HISTÓRIAS", 11, muted); hint.setGravity(Gravity.CENTER); root.addView(hint, new LinearLayout.LayoutParams(-1,42));
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setGravity(Gravity.CENTER_HORIZONTAL);
+        root.setBackgroundColor(Color.rgb(5,5,9));
+        root.setPadding(24,34,24,28);
 
-        root.addView(cityCard("CIDADE 01", "Seu primeiro personagem", "ip.oscrias.com.br:7777", CITY1_HOST, CITY1_PORT));
-        root.addView(space(14));
-        root.addView(cityCard("CIDADE 02", "Seu segundo personagem", "51.254.21.27:7777", CITY2_HOST, CITY2_PORT));
-        root.addView(space(18));
-        TextView footer = text("MYTHØS NETWORK\nEscolha uma cidade para entrar", 10, Color.rgb(105,100,116)); footer.setGravity(Gravity.CENTER); root.addView(footer, new LinearLayout.LayoutParams(-1,45));
+        TextView brand = text("NYX", 42, Color.WHITE, true);
+        root.addView(brand, lp(-1,58));
+        TextView roleplay = text("ROLEPLAY", 13, Color.rgb(180,170,200), true);
+        roleplay.setLetterSpacing(.28f);
+        root.addView(roleplay, lp(-1,30));
+
+        TextView tagline = text("DUAS CIDADES  •  DUAS HISTÓRIAS", 12, Color.rgb(130,125,145), false);
+        tagline.setGravity(Gravity.CENTER);
+        root.addView(tagline, lp(-1,40));
+
+        addSpace(root, 12);
+        root.addView(cityCard("CIDADE 01", "ip.oscrias.com.br:7777", "Seu primeiro personagem", CITY1_HOST, CITY1_PORT), lp(-1,210));
+        addSpace(root, 16);
+        root.addView(cityCard("CIDADE 02", "51.254.21.27:7777", "Seu segundo personagem", CITY2_HOST, CITY2_PORT), lp(-1,210));
+
+        addSpace(root, 18);
+        TextView footer = text("MYTHØS NETWORK", 10, Color.rgb(90,86,100), true);
+        footer.setGravity(Gravity.CENTER);
+        root.addView(footer, lp(-1,28));
         setContentView(root);
     }
 
-    private LinearLayout cityCard(String city, String character, String endpoint, String host, int port) {
-        LinearLayout box = new LinearLayout(this); box.setOrientation(LinearLayout.VERTICAL); box.setPadding(18,16,18,16); box.setBackground(shape(card,22));
-        LinearLayout top = new LinearLayout(this); top.setGravity(Gravity.CENTER_VERTICAL);
-        TextView name = text(city, 19, white); name.setTypeface(Typeface.DEFAULT, Typeface.BOLD); top.addView(name, new LinearLayout.LayoutParams(0,42,1));
-        TextView online = text("● ONLINE", 10, Color.rgb(130,235,160)); online.setGravity(Gravity.CENTER); online.setBackground(shape(Color.rgb(18,48,31),22)); top.addView(online, new LinearLayout.LayoutParams(78,30));
-        box.addView(top);
-        TextView c = text(character, 13, muted); box.addView(c, new LinearLayout.LayoutParams(-1,27));
-        TextView ip = text(endpoint, 10, Color.rgb(120,114,133)); box.addView(ip, new LinearLayout.LayoutParams(-1,24));
-        Button play = new Button(this); play.setText("JOGAR"); play.setTextColor(Color.WHITE); play.setTextSize(15); play.setAllCaps(false); play.setTypeface(Typeface.DEFAULT,Typeface.BOLD); play.setGravity(Gravity.CENTER); play.setBackground(shape(accent,28));
-        LinearLayout.LayoutParams pp = new LinearLayout.LayoutParams(-1,58); pp.topMargin=8; box.addView(play,pp); play.setOnClickListener(v -> launchServer(host,port));
-        return box;
+    private View cityCard(String name, String address, String character, String host, int port) {
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setPadding(22,18,22,16);
+        GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TL_BR,
+                new int[]{Color.rgb(29,25,40), Color.rgb(13,12,18)});
+        bg.setCornerRadius(26);
+        bg.setStroke(1, Color.rgb(62,54,76));
+        card.setBackground(bg);
+
+        TextView city = text(name, 22, Color.WHITE, true);
+        card.addView(city, lp(-1,42));
+        TextView addr = text(address, 11, Color.rgb(160,150,175), false);
+        card.addView(addr, lp(-1,26));
+        TextView charText = text("PERSONAGEM  •  " + character, 11, Color.rgb(120,190,160), true);
+        card.addView(charText, lp(-1,28));
+
+        Button play = new Button(this);
+        play.setText("JOGAR  ▶");
+        play.setTextColor(Color.WHITE);
+        play.setTextSize(15);
+        play.setAllCaps(false);
+        play.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        play.setGravity(Gravity.CENTER);
+        GradientDrawable pb = new GradientDrawable();
+        pb.setColor(Color.rgb(104,52,170));
+        pb.setCornerRadius(18);
+        play.setBackground(pb);
+        play.setOnClickListener(v -> launchServer(host, port));
+        card.addView(play, lp(-1,58));
+        return card;
     }
 
-    private TextView text(String s,float size,int color){TextView t=new TextView(this);t.setText(s);t.setTextSize(size);t.setTextColor(color);return t;}
-    private View space(int h){View v=new View(this);v.setLayoutParams(new LinearLayout.LayoutParams(1,h));return v;}
+    private TextView text(String value, float size, int color, boolean bold) {
+        TextView t = new TextView(this);
+        t.setText(value);
+        t.setTextSize(size);
+        t.setTextColor(color);
+        t.setGravity(Gravity.CENTER_VERTICAL);
+        t.setTypeface(Typeface.DEFAULT, bold ? Typeface.BOLD : Typeface.NORMAL);
+        return t;
+    }
 
-    private void launchServer(String host,int port){
-        Intent launch=getPackageManager().getLaunchIntentForPackage("com.rockstargames.gtasa");
-        if(launch==null){
-            new android.app.AlertDialog.Builder(this).setTitle("Cliente Nyx não encontrado").setMessage("O launcher está pronto, mas o cliente Android do jogo precisa estar instalado para iniciar a cidade.").setPositiveButton("OK",null).show();
+    private LinearLayout.LayoutParams lp(int w, int h) {
+        return new LinearLayout.LayoutParams(w, h);
+    }
+
+    private void addSpace(LinearLayout root, int h) {
+        root.addView(new View(this), lp(1, h));
+    }
+
+    private void launchServer(String host, int port) {
+        Intent launch = getPackageManager().getLaunchIntentForPackage("com.rockstargames.gtasa");
+        if (launch == null) {
+            showMessage("Cliente do jogo não encontrado. Instale o cliente Nyx/SA-MP antes de jogar.");
             return;
         }
-        launch.putExtra("server_ip",host); launch.putExtra("server_port",port); launch.putExtra("ip",host); launch.putExtra("port",port); launch.setData(Uri.parse("samp://"+host+":"+port)); startActivity(launch);
+        launch.putExtra("server_ip", host);
+        launch.putExtra("server_port", port);
+        launch.putExtra("ip", host);
+        launch.putExtra("port", port);
+        launch.setData(Uri.parse("samp://" + host + ":" + port));
+        startActivity(launch);
+    }
+
+    private void showMessage(String message) {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("NYX ROLEPLAY")
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show();
     }
 }
