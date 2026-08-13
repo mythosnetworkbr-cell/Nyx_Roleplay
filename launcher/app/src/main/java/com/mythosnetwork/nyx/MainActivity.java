@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
         logo.setImageResource(R.drawable.nyx_logo);
         root.addView(logo, new LinearLayout.LayoutParams(110,110));
 
-        TextView title = text("RPgram", 30);
+        TextView title = text("NYX ROLEPLAY", 30);
         title.setTypeface(null, 1);
         root.addView(title, new LinearLayout.LayoutParams(-1,65));
 
@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
         sub.setTextColor(Color.rgb(196,181,253));
         root.addView(sub, new LinearLayout.LayoutParams(-1,40));
 
-        TextView mode = text("CIDADE VIVA • ROLEPLAY MOBILE", 12);
+        TextView mode = text("ROLEPLAY MOBILE", 12);
         mode.setTextColor(Color.rgb(169,162,184));
         root.addView(mode, new LinearLayout.LayoutParams(-1,45));
 
@@ -50,7 +50,7 @@ public class MainActivity extends Activity {
         root.addView(folder, new LinearLayout.LayoutParams(-1,60));
 
         Button play = new Button(this);
-        play.setText("JOGAR RPgram");
+        play.setText("JOGAR NYX ROLEPLAY");
         play.setTextSize(17);
         play.setOnClickListener(v -> launchGta());
         LinearLayout.LayoutParams pp = new LinearLayout.LayoutParams(-1,65);
@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
     }
 
     void check() {
-        status.setText(installed() ? "GTA San Andreas encontrado. RPgram pronto." : "GTA San Andreas não encontrado.");
+        status.setText(installed() ? "GTA San Andreas encontrado. Nyx pronto." : "GTA San Andreas não encontrado.");
     }
 
     void pick() {
@@ -86,13 +86,13 @@ public class MainActivity extends Activity {
         if (!installed()) {
             new AlertDialog.Builder(this)
                 .setTitle("GTA não encontrado")
-                .setMessage("Instale uma versão compatível do GTA San Andreas antes de iniciar o RPgram.")
+                .setMessage("Instale uma versão compatível do GTA San Andreas antes de iniciar o Nyx Roleplay.")
                 .setPositiveButton("OK", null).show();
             return;
         }
         Intent i = getPackageManager().getLaunchIntentForPackage("com.rockstargames.gtasa");
         if (i != null) {
-            status.setText("Iniciando RPgram...");
+            status.setText("Iniciando Nyx Roleplay...");
             startActivity(i);
         } else status.setText("Não foi possível iniciar o GTA.");
     }
@@ -101,7 +101,7 @@ public class MainActivity extends Activity {
         super.onActivityResult(r,c,d);
         if (r == PICK && c == RESULT_OK && d != null) {
             getPreferences(0).edit().putString("gta_tree", d.getData().toString()).apply();
-            status.setText("Pasta GTA vinculada. RPgram pronto para iniciar.");
+            status.setText("Pasta GTA vinculada. Nyx pronto para iniciar.");
         }
     }
 }
