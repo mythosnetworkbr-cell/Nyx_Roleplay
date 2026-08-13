@@ -1,0 +1,25 @@
+{
+  "name": "Nyx Roleplay",
+  "brand": "Mythøs Network",
+  "colors": {
+    "background": "#070711",
+    "surface": "#11111D",
+    "surfaceElevated": "#181827",
+    "primary": "#8B5CF6",
+    "primaryDark": "#5B21B6",
+    "accent": "#C4B5FD",
+    "text": "#FFFFFF",
+    "textMuted": "#9CA3AF",
+    "success": "#22C55E",
+    "danger": "#EF4444"
+  },
+  "typography": {
+    "heading": "NyxDisplay",
+    "body": "NyxSans"
+  },
+  "ui": {
+    "cornerRadius": 18,
+    "buttonHeight": 54,
+    "glassOpacity": 0.88
+  }
+}
