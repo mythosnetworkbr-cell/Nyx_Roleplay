@@ -1,0 +1,48 @@
+{
+  "world": "Nyx Brasil",
+  "version": 1,
+  "source": "OpenStreetMap-derived reference; final 3D assets are original Nyx assets",
+  "license_note": "If OSM data is used, display OpenStreetMap attribution and comply with ODbL.",
+  "cities": [
+    {
+      "id": "curitiba",
+      "name": "Curitiba",
+      "zones": ["Centro", "Residencial", "Industrial", "Comunidades", "Rodovias", "Mirante"]
+    },
+    {
+      "id": "florianopolis",
+      "name": "Florianópolis",
+      "zones": ["Centro", "Praias", "Turística", "Comunidades", "Marina", "Rural"]
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "nyx_bridge",
+      "name": "Ponte Nyx",
+      "type": "bridge",
+      "connects": ["curitiba", "florianopolis"],
+      "design": "original monumental multi-arch bridge",
+      "gameplay": ["road_connection", "scenic_route", "police_events"]
+    },
+    {
+      "id": "nyx_mirante",
+      "name": "Mirante Nyx",
+      "type": "viewpoint",
+      "gameplay": ["tourism", "photography", "social_events"]
+    },
+    {
+      "id": "nyx_store",
+      "name": "NyxStore",
+      "type": "clothing_store",
+      "landmark": "original liberty-inspired statue",
+      "gameplay": ["clothing", "character_customization", "shopping"]
+    }
+  ],
+  "streaming": {
+    "enabled": true,
+    "cell_size_meters": 512,
+    "load_radius_cells": 3,
+    "unload_radius_cells": 5,
+    "mobile_target": true
+  }
+}
