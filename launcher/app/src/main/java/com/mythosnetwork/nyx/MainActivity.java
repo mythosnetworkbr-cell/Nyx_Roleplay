@@ -9,13 +9,13 @@ import android.net.Uri;
 import android.view.Gravity;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
-    private static final String SERVER1_HOST = "ip.oscrias.com.br";
-    private static final String SERVER1_IP = "ip.oscrias.com.br";
-    private static final int SERVER1_PORT = 7777;
-    private static final String SERVER2_HOST = "51.254.21.27";
-    private static final int SERVER2_PORT = 7777;
+    private static final String CITY1_HOST = "ip.oscrias.com.br";
+    private static final int CITY1_PORT = 7777;
+    private static final String CITY2_HOST = "51.254.21.27";
+    private static final int CITY2_PORT = 7777;
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -28,14 +28,29 @@ public class MainActivity extends Activity {
         root.setBackgroundColor(Color.rgb(7,6,12));
         root.setPadding(28,28,28,28);
 
-        Button server1 = button("▶  NYX ROLEPLAY 01");
-        Button server2 = button("▶  NYX ROLEPLAY 02");
-        root.addView(server1, new LinearLayout.LayoutParams(-1,72));
-        LinearLayout.LayoutParams gap = new LinearLayout.LayoutParams(1,18);
-        root.addView(new android.view.View(this),gap);
-        root.addView(server2, new LinearLayout.LayoutParams(-1,72));
-        server1.setOnClickListener(v -> launchServer(SERVER1_HOST, SERVER1_PORT));
-        server2.setOnClickListener(v -> launchServer(SERVER2_HOST, SERVER2_PORT));
+        TextView title = new TextView(this);
+        title.setText("NYX ROLEPLAY");
+        title.setTextColor(Color.WHITE);
+        title.setTextSize(28);
+        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        title.setGravity(Gravity.CENTER);
+        root.addView(title, new LinearLayout.LayoutParams(-1,60));
+
+        TextView subtitle = new TextView(this);
+        subtitle.setText("ESCOLHA SUA CIDADE");
+        subtitle.setTextColor(Color.rgb(170,160,190));
+        subtitle.setTextSize(12);
+        subtitle.setGravity(Gravity.CENTER);
+        root.addView(subtitle, new LinearLayout.LayoutParams(-1,38));
+
+        Button city1 = button("▶  CIDADE 01");
+        Button city2 = button("▶  CIDADE 02");
+        root.addView(city1, new LinearLayout.LayoutParams(-1,72));
+        root.addView(new android.view.View(this), new LinearLayout.LayoutParams(1,18));
+        root.addView(city2, new LinearLayout.LayoutParams(-1,72));
+
+        city1.setOnClickListener(v -> launchServer(CITY1_HOST, CITY1_PORT));
+        city2.setOnClickListener(v -> launchServer(CITY2_HOST, CITY2_PORT));
         setContentView(root);
     }
 
