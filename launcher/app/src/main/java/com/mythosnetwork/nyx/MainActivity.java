@@ -34,6 +34,9 @@ public class MainActivity extends Activity {
         getWindow().setNavigationBarColor(BG);
         hideSystemBars();
         showLogin();
+        OnlineContent.check(this, (ok, message) -> {
+            if (ok) Toast.makeText(this, "NYX: conteúdo online verificado", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void hideSystemBars() {
@@ -55,14 +58,12 @@ public class MainActivity extends Activity {
         root.addView(text("VIVA SUA HISTÓRIA. ESCREVA SUA LENDA.", 16, Color.WHITE, true), lp(-1, 40));
         root.addView(text("Curitiba  •  Florianópolis  •  Mythøs Network", 12, MUTED, false), lp(-1, 30));
         addSpace(root, 12);
-
         Button google = button("G   ENTRAR COM GOOGLE", true);
         google.setOnClickListener(v -> showCities());
         root.addView(google, lp(-1, 62));
         addSpace(root, 12);
         root.addView(text("OU", 11, MUTED, true), lp(-1, 24));
         addSpace(root, 8);
-
         EditText email = input("E-mail ou nome de usuário");
         root.addView(email, lp(-1, 56));
         addSpace(root, 10);
@@ -70,7 +71,6 @@ public class MainActivity extends Activity {
         pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         root.addView(pass, lp(-1, 56));
         addSpace(root, 14);
-
         Button login = button("ENTRAR", false);
         login.setOnClickListener(v -> showCities());
         root.addView(login, lp(-1, 56));
@@ -162,7 +162,7 @@ public class MainActivity extends Activity {
         root.addView(map, lp(-1, 200));
         addSpace(root, 14);
         Button play = button("ENTRAR NO MUNDO", false);
-        play.setOnClickListener(v -> Toast.makeText(this, "Cliente Nyx pronto para a próxima camada do mundo 3D.", Toast.LENGTH_LONG).show());
+        play.setOnClickListener(v -> Toast.makeText(this, "Cliente NYX pronto para a próxima camada do mundo 3D.", Toast.LENGTH_LONG).show());
         root.addView(play, lp(-1, 58));
         root.addView(text("NYXSTORE  •  ROUPAS  •  VEÍCULOS  •  EMPREGOS  •  CASAMENTO", 10, MUTED, true), lp(-1, 42));
         setContentView(wrap(root));
@@ -178,7 +178,6 @@ public class MainActivity extends Activity {
             root.addView(b, lp(-1, 30));
         }
     }
-
     private LinearLayout base() {
         LinearLayout r = new LinearLayout(this);
         r.setOrientation(LinearLayout.VERTICAL);
@@ -187,7 +186,6 @@ public class MainActivity extends Activity {
         r.setBackgroundColor(BG);
         return r;
     }
-
     private ScrollView wrap(View v) {
         ScrollView s = new ScrollView(this);
         s.setFillViewport(true);
@@ -195,73 +193,28 @@ public class MainActivity extends Activity {
         s.addView(v);
         return s;
     }
-
     private TextView title(String v, float z) { return text(v, z, Color.WHITE, true); }
     private TextView text(String v, float z, int c, boolean b) {
         TextView t = new TextView(this);
-        t.setText(v);
-        t.setTextSize(z);
-        t.setTextColor(c);
-        t.setGravity(Gravity.CENTER_VERTICAL);
-        t.setTypeface(Typeface.DEFAULT, b ? Typeface.BOLD : Typeface.NORMAL);
-        return t;
+        t.setText(v); t.setTextSize(z); t.setTextColor(c); t.setGravity(Gravity.CENTER_VERTICAL);
+        t.setTypeface(Typeface.DEFAULT, b ? Typeface.BOLD : Typeface.NORMAL); return t;
     }
-
     private EditText input(String hint) {
-        EditText e = new EditText(this);
-        e.setHint(hint);
-        e.setHintTextColor(Color.rgb(105, 102, 120));
-        e.setTextColor(Color.WHITE);
-        e.setTextSize(16);
-        e.setSingleLine(true);
-        e.setPadding(18, 0, 18, 0);
-        e.setBackground(round(SURFACE, 16));
-        return e;
+        EditText e = new EditText(this); e.setHint(hint); e.setHintTextColor(Color.rgb(105,102,120));
+        e.setTextColor(Color.WHITE); e.setTextSize(16); e.setSingleLine(true); e.setPadding(18,0,18,0);
+        e.setBackground(round(SURFACE,16)); return e;
     }
-
     private Button button(String v, boolean google) {
-        Button b = new Button(this);
-        b.setText(v);
-        b.setTextColor(google ? Color.rgb(25,25,30) : Color.WHITE);
-        b.setTextSize(14);
-        b.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        b.setAllCaps(false);
-        b.setGravity(Gravity.CENTER);
-        b.setMinHeight(0);
-        b.setPadding(8, 0, 8, 0);
-        b.setBackground(round(google ? Color.WHITE : PURPLE, 18));
-        return b;
+        Button b = new Button(this); b.setText(v); b.setTextColor(google ? Color.rgb(25,25,30) : Color.WHITE);
+        b.setTextSize(14); b.setTypeface(Typeface.DEFAULT,Typeface.BOLD); b.setAllCaps(false); b.setGravity(Gravity.CENTER);
+        b.setMinHeight(0); b.setPadding(8,0,8,0); b.setBackground(round(google ? Color.WHITE : PURPLE,18)); return b;
     }
-
-    private Button outlineButton(String v) {
-        Button b = button(v, false);
-        b.setBackground(stroke());
-        return b;
-    }
-
-    private void selected(Button b) {
-        b.setTextColor(Color.WHITE);
-        b.setBackground(round(PURPLE, 18));
-    }
-
-    private GradientDrawable panel() { return round(SURFACE2, 20); }
-    private GradientDrawable round(int c, int r) {
-        GradientDrawable g = new GradientDrawable();
-        g.setColor(c);
-        g.setCornerRadius(r);
-        g.setStroke(1, Color.rgb(52, 45, 72));
-        return g;
-    }
-    private GradientDrawable stroke() {
-        GradientDrawable g = round(Color.TRANSPARENT, 18);
-        g.setStroke(2, Color.rgb(110, 78, 180));
-        return g;
-    }
-    private LinearLayout.LayoutParams lp(int w, int h) { return new LinearLayout.LayoutParams(w, h); }
-    private LinearLayout.LayoutParams lp(int w, int h, float weight) {
-        LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(w, h, weight);
-        p.setMargins(6, 0, 6, 0);
-        return p;
-    }
-    private void addSpace(LinearLayout r, int h) { r.addView(new View(this), lp(1, h)); }
+    private Button outlineButton(String v) { Button b=button(v,false); b.setBackground(stroke()); return b; }
+    private void selected(Button b) { b.setTextColor(Color.WHITE); b.setBackground(round(PURPLE,18)); }
+    private GradientDrawable panel() { return round(SURFACE2,20); }
+    private GradientDrawable round(int c,int r) { GradientDrawable g=new GradientDrawable(); g.setColor(c); g.setCornerRadius(r); g.setStroke(1,Color.rgb(52,45,72)); return g; }
+    private GradientDrawable stroke() { GradientDrawable g=round(Color.TRANSPARENT,18); g.setStroke(2,Color.rgb(110,78,180)); return g; }
+    private LinearLayout.LayoutParams lp(int w,int h) { return new LinearLayout.LayoutParams(w,h); }
+    private LinearLayout.LayoutParams lp(int w,int h,float weight) { LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(w,h,weight); p.setMargins(6,0,6,0); return p; }
+    private void addSpace(LinearLayout r,int h) { r.addView(new View(this),lp(1,h)); }
 }
