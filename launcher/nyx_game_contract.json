@@ -1,0 +1,10 @@
+{
+  "game_repository": "mythosnetworkbr-cell/Game_base",
+  "game_branch": "main",
+  "server_name": "NYX ROLEPLAY",
+  "protocol": "samp-compatible",
+  "default_port": 7777,
+  "client_entry": "game client",
+  "update_manifest": "assets/map/nyx_world_map.json",
+  "launcher_action": "verify -> update -> launch"
+}
