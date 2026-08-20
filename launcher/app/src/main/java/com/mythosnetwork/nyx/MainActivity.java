@@ -1,220 +1,231 @@
 package com.mythosnetwork.nyx;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
-import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-    private static final int BG = Color.rgb(5, 5, 14);
-    private static final int SURFACE = Color.rgb(15, 15, 27);
-    private static final int SURFACE2 = Color.rgb(22, 20, 38);
+    private static final int BG = Color.rgb(7, 6, 12);
+    private static final int SURFACE = Color.rgb(17, 15, 25);
+    private static final int SURFACE_2 = Color.rgb(25, 21, 36);
     private static final int PURPLE = Color.rgb(139, 92, 246);
-    private static final int PURPLE2 = Color.rgb(168, 85, 247);
-    private static final int MUTED = Color.rgb(174, 169, 190);
-    private String selectedCity = "";
-    private String selectedGender = "";
+    private static final int PURPLE_LIGHT = Color.rgb(196, 155, 255);
+    private static final int WHITE = Color.WHITE;
+    private static final int MUTED = Color.rgb(171, 165, 184);
+    private static final String SERVER_URI = "samp://51.68.107.75:10961";
 
-    @Override public void onCreate(Bundle state) {
+    private TextView status;
+    private ProgressBar progress;
+    private Button play;
+    private boolean online;
+
+    @Override
+    protected void onCreate(Bundle state) {
         super.onCreate(state);
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
         hideSystemBars();
-        showLogin();
-        OnlineContent.check(this, (ok, message) -> {
-            if (ok) Toast.makeText(this, "NYX: conteúdo online verificado", Toast.LENGTH_SHORT).show();
-        });
+        showLauncher();
+        refreshOnlineStatus();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) hideSystemBars();
     }
 
     private void hideSystemBars() {
-        Window w = getWindow();
         if (android.os.Build.VERSION.SDK_INT >= 30) {
-            WindowInsetsController c = w.getInsetsController();
-            if (c != null) c.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+            WindowInsetsController controller = getWindow().getInsetsController();
+            if (controller != null) controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
         } else {
-            w.getDecorView().setSystemUiVisibility(
+            getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
     }
 
-    private void showLogin() {
+    private void showLauncher() {
         LinearLayout root = base();
-        addBrand(root, "NYX", "ROLEPLAY");
-        root.addView(text("VIVA SUA HISTÓRIA. ESCREVA SUA LENDA.", 16, Color.WHITE, true), lp(-1, 40));
-        root.addView(text("Curitiba  •  Florianópolis  •  Mythøs Network", 12, MUTED, false), lp(-1, 30));
-        addSpace(root, 12);
-        Button google = button("G   ENTRAR COM GOOGLE", true);
-        google.setOnClickListener(v -> showCities());
-        root.addView(google, lp(-1, 62));
-        addSpace(root, 12);
-        root.addView(text("OU", 11, MUTED, true), lp(-1, 24));
-        addSpace(root, 8);
-        EditText email = input("E-mail ou nome de usuário");
-        root.addView(email, lp(-1, 56));
-        addSpace(root, 10);
-        EditText pass = input("Senha");
-        pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        root.addView(pass, lp(-1, 56));
-        addSpace(root, 14);
-        Button login = button("ENTRAR", false);
-        login.setOnClickListener(v -> showCities());
-        root.addView(login, lp(-1, 56));
-        addSpace(root, 10);
-        Button create = outlineButton("CRIAR CONTA");
-        create.setOnClickListener(v -> showCities());
-        root.addView(create, lp(-1, 56));
-        root.addView(text("MUNDO ABERTO   •   DUAS CIDADES   •   PROFISSÕES   •   ROLEPLAY REAL", 10, MUTED, true), lp(-1, 44));
+        LinearLayout header = new LinearLayout(this);
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        header.setGravity(Gravity.CENTER_VERTICAL);
+
+        LinearLayout brand = new LinearLayout(this);
+        brand.setOrientation(LinearLayout.VERTICAL);
+        TextView mythos = text("MYTHØS", 29, WHITE, true);
+        TextView network = text("NETWORK", 11, PURPLE_LIGHT, true);
+        network.setLetterSpacing(.30f);
+        brand.addView(mythos, lp(-1, 40));
+        brand.addView(network, lp(-1, 24));
+        header.addView(brand, lp(0, 70, 1));
+
+        TextView version = text("LAUNCHER 2.2", 11, MUTED, true);
+        version.setGravity(Gravity.CENTER);
+        version.setBackground(round(Color.rgb(32, 27, 45), 16));
+        header.addView(version, lp(125, 42));
+        root.addView(header, lp(-1, 78));
+
+        LinearLayout hero = new LinearLayout(this);
+        hero.setOrientation(LinearLayout.VERTICAL);
+        hero.setGravity(Gravity.CENTER_VERTICAL);
+        hero.setPadding(34, 28, 34, 28);
+        hero.setBackground(heroBackground());
+
+        TextView eyebrow = text("MYTHØS ROLEPLAY", 12, PURPLE_LIGHT, true);
+        eyebrow.setLetterSpacing(.20f);
+        hero.addView(eyebrow, lp(-1, 26));
+        hero.addView(text("SEU MUNDO.\nSUA HISTÓRIA.", 35, WHITE, true), lp(-1, 92));
+        hero.addView(text("Entre diretamente no servidor Mythøs Network.\nO Launcher verifica o conteúdo online antes de abrir o cliente.", 14, MUTED, false), lp(-1, 58));
+
+        LinearLayout server = new LinearLayout(this);
+        server.setOrientation(LinearLayout.VERTICAL);
+        server.setPadding(18, 12, 18, 12);
+        server.setBackground(round(SURFACE, 14));
+        server.addView(text("SERVIDOR OFICIAL", 10, MUTED, true), lp(-1, 20));
+        server.addView(text("51.68.107.75:10961", 16, WHITE, true), lp(-1, 28));
+        hero.addView(server, lp(-1, 70));
+        root.addView(hero, lp(-1, 270));
+
+        LinearLayout statusPanel = new LinearLayout(this);
+        statusPanel.setOrientation(LinearLayout.VERTICAL);
+        statusPanel.setPadding(20, 12, 20, 12);
+        statusPanel.setBackground(round(SURFACE_2, 16));
+        status = text("VERIFICANDO CONTEÚDO...", 12, MUTED, true);
+        statusPanel.addView(status, lp(-1, 24));
+        progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+        progress.setMax(100);
+        progress.setIndeterminate(true);
+        statusPanel.addView(progress, lp(-1, 8));
+        root.addView(statusPanel, lp(-1, 62));
+
+        play = button("JOGAR", false);
+        play.setEnabled(false);
+        play.setAlpha(.55f);
+        play.setOnClickListener(v -> launchServer());
+        root.addView(play, lp(-1, 62));
+
+        TextView info = text("O IP é fixo. Não é necessário adicionar servidor manualmente.\nO Android decide automaticamente qual cliente SAMP deve receber o protocolo samp://.", 11, MUTED, false);
+        info.setGravity(Gravity.CENTER);
+        root.addView(info, lp(-1, 54));
+
+        TextView footer = text("MYTHØS NETWORK  •  RP MOBILE  •  LAUNCHER OFICIAL", 9, MUTED, true);
+        footer.setGravity(Gravity.CENTER);
+        root.addView(footer, lp(-1, 32));
         setContentView(wrap(root));
     }
 
-    private void showCities() {
-        LinearLayout root = base();
-        addBrand(root, "ESCOLHA SUA CIDADE", "");
-        root.addView(text("Cada cidade possui personagem e progresso próprios.", 14, MUTED, false), lp(-1, 38));
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(Gravity.CENTER);
-        row.addView(cityCard("CURITIBA", "Cidade urbana • empregos • polícia • universidade", "CIDADE 01"), lp(0, 330, 1));
-        row.addView(cityCard("FLORIANÓPOLIS", "Ilha • praias • turismo • porto • comunidades", "CIDADE 02"), lp(0, 330, 1));
-        root.addView(row, lp(-1, 350));
-        root.addView(text("ESCOLHA UMA CIDADE PARA CRIAR OU CONTINUAR SEU PERSONAGEM", 10, MUTED, true), lp(-1, 42));
-        setContentView(wrap(root));
-    }
-
-    private View cityCard(String city, String desc, String id) {
-        LinearLayout card = new LinearLayout(this);
-        card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(22, 20, 22, 18);
-        card.setGravity(Gravity.CENTER_VERTICAL);
-        card.setBackground(panel());
-        card.addView(text(id, 11, PURPLE2, true), lp(-1, 26));
-        card.addView(text(city, 28, Color.WHITE, true), lp(-1, 48));
-        card.addView(text(desc, 12, MUTED, false), lp(-1, 62));
-        Button b = button("ESCOLHER  ›", false);
-        b.setOnClickListener(v -> { selectedCity = city; showCharacter(); });
-        card.addView(b, lp(-1, 54));
-        return card;
-    }
-
-    private void showCharacter() {
-        LinearLayout root = base();
-        addBrand(root, "SEU PERSONAGEM", "");
-        root.addView(text(selectedCity + "  •  NOVO PERSONAGEM", 13, PURPLE2, true), lp(-1, 32));
-        EditText name = input("Nome do personagem");
-        root.addView(name, lp(-1, 58));
-        addSpace(root, 16);
-        root.addView(text("GÊNERO", 12, MUTED, true), lp(-1, 26));
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        Button male = outlineButton("MASCULINO");
-        Button female = outlineButton("FEMININO");
-        male.setOnClickListener(v -> { selectedGender = "Masculino"; selected(male); selected(female); });
-        female.setOnClickListener(v -> { selectedGender = "Feminino"; selected(female); selected(male); });
-        row.addView(male, lp(0, 56, 1));
-        row.addView(female, lp(0, 56, 1));
-        root.addView(row, lp(-1, 58));
-        addSpace(root, 12);
-        root.addView(text("A escolha de gênero não limita relacionamentos ou casamento.", 11, MUTED, false), lp(-1, 34));
-        Button enter = button("CRIAR E ENTRAR NA CIDADE", false);
-        enter.setOnClickListener(v -> {
-            if (name.getText().toString().trim().isEmpty()) {
-                name.setError("Digite o nome do personagem");
-                return;
+    private void refreshOnlineStatus() {
+        OnlineContent.check(this, (ok, message) -> {
+            online = ok;
+            if (ok) {
+                status.setText("ONLINE  •  CONTEÚDO VERIFICADO");
+                status.setTextColor(Color.rgb(120, 220, 150));
+                progress.setIndeterminate(false);
+                progress.setProgress(100);
+                play.setEnabled(true);
+                play.setAlpha(1f);
+            } else {
+                status.setText("OFFLINE  •  TENTAR NOVAMENTE");
+                status.setTextColor(Color.rgb(255, 170, 100));
+                progress.setIndeterminate(false);
+                progress.setProgress(0);
+                play.setEnabled(true);
+                play.setAlpha(1f);
             }
-            if (selectedGender.isEmpty()) {
-                Toast.makeText(this, "Escolha o gênero do personagem", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            showWorld(name.getText().toString().trim());
         });
-        root.addView(enter, lp(-1, 60));
-        setContentView(wrap(root));
     }
 
-    private void showWorld(String character) {
-        LinearLayout root = base();
-        addBrand(root, "NYX", "ROLEPLAY");
-        root.addView(text(selectedCity + "  •  " + character, 14, Color.WHITE, true), lp(-1, 34));
-        LinearLayout map = new LinearLayout(this);
-        map.setOrientation(LinearLayout.VERTICAL);
-        map.setGravity(Gravity.CENTER);
-        map.setPadding(24, 18, 24, 18);
-        map.setBackground(panel());
-        map.addView(text("MAPA DO MUNDO", 20, PURPLE2, true), lp(-1, 34));
-        map.addView(text("CURITIBA       🌉       FLORIANÓPOLIS", 16, Color.WHITE, true), lp(-1, 44));
-        map.addView(text("Ponte da Integração  •  Mirante  •  NYXStore", 12, MUTED, false), lp(-1, 38));
-        map.addView(text("Hospital  •  Polícia  •  BOPE  •  Exército  •  Universidade  •  Jornal", 11, MUTED, false), lp(-1, 38));
-        root.addView(map, lp(-1, 200));
-        addSpace(root, 14);
-        Button play = button("ENTRAR NO MUNDO", false);
-        play.setOnClickListener(v -> Toast.makeText(this, "Cliente NYX pronto para a próxima camada do mundo 3D.", Toast.LENGTH_LONG).show());
-        root.addView(play, lp(-1, 58));
-        root.addView(text("NYXSTORE  •  ROUPAS  •  VEÍCULOS  •  EMPREGOS  •  CASAMENTO", 10, MUTED, true), lp(-1, 42));
-        setContentView(wrap(root));
-    }
-
-    private void addBrand(LinearLayout root, String main, String sub) {
-        TextView a = title(main, 32);
-        a.setGravity(Gravity.CENTER_VERTICAL);
-        root.addView(a, lp(-1, 48));
-        if (!sub.isEmpty()) {
-            TextView b = title(sub, 13);
-            b.setLetterSpacing(.28f);
-            root.addView(b, lp(-1, 30));
+    private void launchServer() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(SERVER_URI));
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "Nenhum cliente SAMP compatível com samp:// foi encontrado. Instale o cliente Mobile e tente novamente.", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Não foi possível abrir o cliente: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
+
     private LinearLayout base() {
-        LinearLayout r = new LinearLayout(this);
-        r.setOrientation(LinearLayout.VERTICAL);
-        r.setGravity(Gravity.CENTER_HORIZONTAL);
-        r.setPadding(24, 18, 24, 18);
-        r.setBackgroundColor(BG);
-        return r;
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(28, 20, 28, 16);
+        root.setBackgroundColor(BG);
+        return root;
     }
-    private ScrollView wrap(View v) {
-        ScrollView s = new ScrollView(this);
-        s.setFillViewport(true);
-        s.setClipToPadding(false);
-        s.addView(v);
-        return s;
+
+    private ScrollView wrap(View view) {
+        ScrollView scroll = new ScrollView(this);
+        scroll.setFillViewport(true);
+        scroll.setClipToPadding(false);
+        scroll.addView(view);
+        return scroll;
     }
-    private TextView title(String v, float z) { return text(v, z, Color.WHITE, true); }
-    private TextView text(String v, float z, int c, boolean b) {
-        TextView t = new TextView(this);
-        t.setText(v); t.setTextSize(z); t.setTextColor(c); t.setGravity(Gravity.CENTER_VERTICAL);
-        t.setTypeface(Typeface.DEFAULT, b ? Typeface.BOLD : Typeface.NORMAL); return t;
+
+    private TextView text(String value, float size, int color, boolean bold) {
+        TextView view = new TextView(this);
+        view.setText(value);
+        view.setTextSize(size);
+        view.setTextColor(color);
+        view.setTypeface(Typeface.DEFAULT, bold ? Typeface.BOLD : Typeface.NORMAL);
+        view.setGravity(Gravity.CENTER_VERTICAL);
+        return view;
     }
-    private EditText input(String hint) {
-        EditText e = new EditText(this); e.setHint(hint); e.setHintTextColor(Color.rgb(105,102,120));
-        e.setTextColor(Color.WHITE); e.setTextSize(16); e.setSingleLine(true); e.setPadding(18,0,18,0);
-        e.setBackground(round(SURFACE,16)); return e;
+
+    private Button button(String value, boolean light) {
+        Button button = new Button(this);
+        button.setText(value);
+        button.setTextSize(16);
+        button.setTextColor(light ? Color.rgb(20, 18, 24) : WHITE);
+        button.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        button.setAllCaps(false);
+        button.setMinHeight(0);
+        button.setPadding(8, 0, 8, 0);
+        button.setBackground(round(light ? WHITE : PURPLE, 18));
+        return button;
     }
-    private Button button(String v, boolean google) {
-        Button b = new Button(this); b.setText(v); b.setTextColor(google ? Color.rgb(25,25,30) : Color.WHITE);
-        b.setTextSize(14); b.setTypeface(Typeface.DEFAULT,Typeface.BOLD); b.setAllCaps(false); b.setGravity(Gravity.CENTER);
-        b.setMinHeight(0); b.setPadding(8,0,8,0); b.setBackground(round(google ? Color.WHITE : PURPLE,18)); return b;
+
+    private GradientDrawable heroBackground() {
+        GradientDrawable drawable = new GradientDrawable(
+            GradientDrawable.Orientation.TL_BR,
+            new int[]{Color.rgb(31, 19, 49), Color.rgb(14, 12, 22)});
+        drawable.setCornerRadius(24);
+        drawable.setStroke(1, Color.rgb(70, 50, 96));
+        return drawable;
     }
-    private Button outlineButton(String v) { Button b=button(v,false); b.setBackground(stroke()); return b; }
-    private void selected(Button b) { b.setTextColor(Color.WHITE); b.setBackground(round(PURPLE,18)); }
-    private GradientDrawable panel() { return round(SURFACE2,20); }
-    private GradientDrawable round(int c,int r) { GradientDrawable g=new GradientDrawable(); g.setColor(c); g.setCornerRadius(r); g.setStroke(1,Color.rgb(52,45,72)); return g; }
-    private GradientDrawable stroke() { GradientDrawable g=round(Color.TRANSPARENT,18); g.setStroke(2,Color.rgb(110,78,180)); return g; }
-    private LinearLayout.LayoutParams lp(int w,int h) { return new LinearLayout.LayoutParams(w,h); }
-    private LinearLayout.LayoutParams lp(int w,int h,float weight) { LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(w,h,weight); p.setMargins(6,0,6,0); return p; }
-    private void addSpace(LinearLayout r,int h) { r.addView(new View(this),lp(1,h)); }
+
+    private GradientDrawable round(int color, int radius) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(color);
+        drawable.setCornerRadius(radius);
+        drawable.setStroke(1, Color.rgb(53, 43, 69));
+        return drawable;
+    }
+
+    private LinearLayout.LayoutParams lp(int width, int height) {
+        return new LinearLayout.LayoutParams(width, height);
+    }
+
+    private LinearLayout.LayoutParams lp(int width, int height, float weight) {
+        return new LinearLayout.LayoutParams(width, height, weight);
+    }
 }
