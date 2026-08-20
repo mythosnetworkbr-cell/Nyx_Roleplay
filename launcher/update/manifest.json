@@ -1,7 +1,13 @@
 {
-  "versionCode": 1,
-  "versionName": "1.0.0",
+  "versionCode": 12,
+  "versionName": "2.2.0",
   "channel": "stable",
-  "message": "NYX ROLEPLAY — conteúdo online",
+  "product": "Mythøs Launcher",
+  "server": {
+    "host": "51.68.107.75",
+    "port": 10961,
+    "uri": "samp://51.68.107.75:10961"
+  },
+  "message": "MYTHØS Launcher 2.2 Polished — conteúdo online verificado",
   "packages": []
 }
