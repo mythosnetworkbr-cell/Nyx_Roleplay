@@ -29,14 +29,22 @@ jobs:
       - name: Install Android SDK packages
         run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
-      - name: Generate Gradle wrapper
-        run: gradle wrapper --gradle-version 8.7
+      - name: Install Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+      - name: Build release APK
+        run: gradle assembleRelease --no-daemon --stacktrace
 
-      - name: Upload APK
+      - name: Verify APK
+        run: |
+          test -s app/build/outputs/apk/release/app-release.apk
+          ls -lh app/build/outputs/apk/release/app-release.apk
+
+      - name: Upload release APK
         uses: actions/upload-artifact@v4
         with:
-          name: Nyx-Roleplay-Launcher-debug
-          path: launcher/app/build/outputs/apk/debug/app-debug.apk
+          name: Mythos-Launcher-2.2.0-release
+          path: launcher/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
