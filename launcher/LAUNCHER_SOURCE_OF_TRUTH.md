@@ -9,8 +9,8 @@ This directory is the official Launcher project for the Mythøs Network.
 - Version: `2.2.0`
 - Android versionCode: `12`
 - Orientation: landscape
-- Target server: `51.68.107.75:10961`
-- Direct protocol: `samp://51.68.107.75:10961`
+- Target server: `ip.oscrias.com.br:7777`
+- Direct protocol: `samp://ip.oscrias.com.br:7777`
 
 ## Responsibilities
 
