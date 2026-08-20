@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
     private static final int PURPLE_LIGHT = Color.rgb(196, 155, 255);
     private static final int WHITE = Color.WHITE;
     private static final int MUTED = Color.rgb(171, 165, 184);
-    private static final String SERVER_URI = "samp://51.68.107.75:10961";
+    private static final String SERVER_URI = "samp://ip.oscrias.com.br:7777";
 
     private TextView status;
     private ProgressBar progress;
@@ -100,7 +100,7 @@ public class MainActivity extends Activity {
         server.setPadding(18, 12, 18, 12);
         server.setBackground(round(SURFACE, 14));
         server.addView(text("SERVIDOR OFICIAL", 10, MUTED, true), lp(-1, 20));
-        server.addView(text("51.68.107.75:10961", 16, WHITE, true), lp(-1, 28));
+        server.addView(text("ip.oscrias.com.br:7777", 16, WHITE, true), lp(-1, 28));
         hero.addView(server, lp(-1, 70));
         root.addView(hero, lp(-1, 270));
 
