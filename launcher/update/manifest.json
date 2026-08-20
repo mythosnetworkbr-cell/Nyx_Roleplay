@@ -4,9 +4,9 @@
   "channel": "stable",
   "product": "Mythøs Launcher",
   "server": {
-    "host": "51.68.107.75",
-    "port": 10961,
-    "uri": "samp://51.68.107.75:10961"
+    "host": "ip.oscrias.com.br",
+    "port": 7777,
+    "uri": "samp://ip.oscrias.com.br:7777"
   },
   "message": "MYTHØS Launcher 2.2 Polished — conteúdo online verificado",
   "packages": []
