@@ -6,6 +6,10 @@ on:
     paths:
       - 'launcher/**'
       - '.github/workflows/build-nyx-launcher.yml'
+  pull_request:
+    paths:
+      - 'launcher/**'
+      - '.github/workflows/build-nyx-launcher.yml'
 
 jobs:
   build:
